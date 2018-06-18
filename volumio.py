@@ -10,9 +10,9 @@ class Volumio:
         self._state = {}
         self._queue = list()
         self._radios = list()
-        self._waiting = 1
+        self._waiting = .1
 
-        print(f"Creating socket {address}:{port}")
+        print("Creating socket {address}:{port}".format(address=address, port=port))
         self._sock = SocketIO(address, port)
 
         # Définition des fonctions de callback
@@ -106,6 +106,14 @@ class Volumio:
         """
         return Volumio.get_name(self._state)
 
+    def playing_uri(self):
+        self.get_state()
+        return self._state["uri"]
+
+    def stop(self):
+        self._send('stop')
+        self._send('clearQueue')
+
     def queue(self):
         """
         Retourne la liste de lecture courante
@@ -126,8 +134,8 @@ class Volumio:
         Définit le volume de lecture
         :param volume: Volume souhaité [0-100]
         """
-        assert isinstance(volume, int), f":volume: doit être un entier (type : {type(volume)})"
-        assert 0 <= volume <= 100, f":volume: doit être compris entre 0 et 100 (valeur : {volume})"
+        assert isinstance(volume, int), ":volume: doit être un entier (type : {})".format(type(volume))
+        assert 0 <= volume <= 100, ":volume: doit être compris entre 0 et 100 (valeur : {})".format(volume)
         self._send('volume', volume, callback=self._on_push_state)
 
     def play_radio(self, uri):

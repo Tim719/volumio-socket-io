@@ -1,4 +1,4 @@
-from Volumio import Volumio
+from volumio import Volumio
 
 
 def main():
